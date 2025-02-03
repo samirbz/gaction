@@ -13,12 +13,13 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: SSH into VM and create file
+      - name: SSH into VM, switch to root, and create file
         run: |
-          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << EOF
-            echo "hello" > ~/file.txt
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << EOF
+            sudo su
+            echo "hello" > /root/file.txt
           EOF
