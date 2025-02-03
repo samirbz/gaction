@@ -1,16 +1,14 @@
-name: Push-triggered workflow
+name: Access Secret Example
 
-# This workflow will run when code is pushed to the repository
 on:
   push:
     branches:
-      - main  # Replace with your default branch name (e.g., master, main)
+      - main
 
-# A workflow run is made up of one or more jobs
 jobs:
-  greet:
+  access-secret:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send greeting
-        run: echo "Hello, this workflow runs on push!"
+      - name: Access secret
+        run: echo "The secret value is ${{ secrets.nametest }}"
