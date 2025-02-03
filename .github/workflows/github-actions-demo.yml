@@ -1,4 +1,4 @@
-name: Show Variable Example
+name: Show Variable with Default
 
 on:
   push:
@@ -10,5 +10,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Display the variable
-        run: echo "The value of 'nametest' is: ${{ vars.nametest }}"
+      - name: Display the variable with default
+        run: echo "The value of 'nametest' is:${{ vars.nametest || 'default_value' }}"
