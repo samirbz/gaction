@@ -11,4 +11,4 @@ jobs:
 
     steps:
       - name: Display the variable with default
-        run: echo "The value of 'nametest' is:${{ vars.nametest || 'default_value' }}"
+        run: echo "The value of 'nametest' is:${{ secrets.my_secret || 'default_value' }}"
