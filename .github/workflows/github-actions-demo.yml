@@ -1,4 +1,4 @@
-name: SSH into VM and Create File
+name: Deploy via Rsync
 
 on:
   push:
@@ -6,20 +6,25 @@ on:
       - main
 
 jobs:
-  ssh-task:
+  rsync-task:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up SSH key
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: SSH into VM, switch to root, and create file
+      - name: Sync File to VM (as root)
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << EOF
-            sudo su
-            echo "hello world ok done tested" > /root/file.txt
-          EOF
+          echo "hello world ok done tested" > file.txt
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" file.txt ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/root/
+
+      - name: Verify File on VM
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "cat /root/file.txt"
