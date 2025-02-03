@@ -1,4 +1,4 @@
-name: Access Secret Example
+name: Show Variable Example
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
       - main
 
 jobs:
-  access-secret:
+  show-variable:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Access secret
-        run: echo "The secret value is ${{ secrets.nametest }}"
+      - name: Display the variable
+        run: echo "The value of 'nametest' is: ${{ vars.nametest }}"
