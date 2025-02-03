@@ -1,4 +1,4 @@
-name: Show Variable with Default
+name: SSH into VM and Create File
 
 on:
   push:
@@ -6,9 +6,19 @@ on:
       - main
 
 jobs:
-  show-variable:
+  ssh-task:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Display the variable with default
-        run: echo "The value of 'nametest' is:${{ secrets.my_secret || 'default_value' }}"
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
+
+      - name: SSH into VM and create file
+        run: |
+          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << EOF
+            echo "hello" > ~/file.txt
+          EOF
